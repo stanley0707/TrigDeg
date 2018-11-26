@@ -1,0 +1,12 @@
+README.txt
+setup.py
+TrigDeg.egg-info/PKG-INFO
+TrigDeg.egg-info/SOURCES.txt
+TrigDeg.egg-info/dependency_links.txt
+TrigDeg.egg-info/top_level.txt
+trigdeg/__init__.py
+trigdeg/core.py
+trigdeg.egg-info/PKG-INFO
+trigdeg.egg-info/SOURCES.txt
+trigdeg.egg-info/dependency_links.txt
+trigdeg.egg-info/top_level.txt
