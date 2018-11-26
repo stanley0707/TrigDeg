@@ -31,12 +31,6 @@ class FigureInitialize:
         key mast a name of figure, value mast be a quantity of sides  """
         self.name_space = {}
         self.vertex = {}
-        self.V1_V2 = 1
-        self.V2_V3 = 1
-        self.V1_V3 = 1
-        self.cos_V1 = None
-        self.cos_V2 = None
-        self.cos_V3 = None
 
     # adding a shape to the parent class field
     def add_figure(self, key):
@@ -45,13 +39,20 @@ class FigureInitialize:
     def get_figure(self, key):
         return self.name_space.get(key)
 
+    def _get_key(self):
+        return [key for key in self.vertex.keys()]
+    
     def remove_figure(self, key):
         return self.name_space.get(key)
 
 
-
 class Triangle(FigureInitialize):
-    
+
+    def __init__(self):
+        super(Triangle, self).__init__()
+        self.side = {}
+        self.cos = {}
+
     def add_vertex_coord(self, key, *args):
         self.vertex[key] = args
 
@@ -63,27 +64,63 @@ class Triangle(FigureInitialize):
     # side equations AB, BC, AC
     def side_value(self):
 
-        key = [key for key in self.vertex.keys()]
-        x1, y1, z1 = self.vertex.get(key[0])
-        x2, y2, z2 = self.vertex.get(key[1])
-        x3, y3, z3 = self.vertex.get(key[2])
+        key = self._get_key()
+        sides = [key[0] +'_'+ key[1], key[1] +'_'+ key[2], key[0] +'_'+ key[2]]
         
-        self.V1_V2 = round(decimal.Decimal(math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2)), 1)
-        self.V2_V3 = round(decimal.Decimal(math.sqrt((x2 - x3) ** 2 + (y2 - y3) ** 2 + (z2 - z3) ** 2)), 1)
-        self.V1_V3 = round(decimal.Decimal(math.sqrt((x1 - x3) ** 2 + (y1 - y3) ** 2 + (z1 - z3) ** 2)), 1)
+        _x1, _y1, _z1 = self.vertex.get(key[0])
+        _x2, _y2, _z2 = self.vertex.get(key[1])
+        _x3, _y3, _z3 = self.vertex.get(key[2])
         
-        Triangle.deg_value(self)
+        V1_V2 = round(decimal.Decimal(
+            math.sqrt((_x1 - _x2) ** 2 + (_y1 - _y2) ** 2 + (_z1 - _z2) ** 2)), 1)
+        V2_V3 = round(decimal.Decimal(
+            math.sqrt((_x2 - _x3) ** 2 + (_y2 - _y3) ** 2 + (_z2 - _z3) ** 2)), 1)
+        V1_V3 = round(decimal.Decimal(
+            math.sqrt((_x1 - _x3) ** 2 + (_y1 - _y3) ** 2 + (_z1 - _z3) ** 2)), 1)
         
-        return "{}, {}, {}".format(self.V1_V2, self.V2_V3, self.V1_V3)
+        self.side = dict(zip(sides, [float(V1_V2), float(V2_V3), float(V1_V3)]))
+        
+        return self.side
     
     
     # Calculation of the sides of a triangle by the cosine theorem.
     # cos a = (b**2 + c**2 - a**2) / (2bc)  
     def deg_value(self):
+        key = self._get_key()
+        a, b, c = self.side.values()
         
-        a, b, c = self.V1_V2, self.V2_V3, self.V1_V3
-        self.cos_V1 = round(math.degrees(math.acos((a**2 + c**2 - b**2) / (2 * a * c))), 3)
-        self.cos_V2 = round(math.degrees(math.acos((a**2 + b**2 - c**2) / (2 * a * b))), 3) 
-        self.cos_V3 = round(math.degrees(math.acos((b**2 + c**2 - a**2) / (2 * c * b))), 3)
+        self.cos_V1 = round(math.degrees(
+            math.acos((a**2 + c**2 - b**2) / (2 * a * c))), 3)
+        self.cos_V2 = round(math.degrees(
+            math.acos((a**2 + b**2 - c**2) / (2 * a * b))), 3) 
+        self.cos_V3 = round(math.degrees(
+            math.acos((b**2 + c**2 - a**2) / (2 * c * b))), 3)
         
-        return "{}, {}, {}".format(self.cos_V1, self.cos_V2, self.cos_V3)
+        self.cos = dict(zip(key, [float(self.cos_V1), float(self.cos_V2), float(self.cos_V3)]))
+        
+        return self.cos
+
+
+
+class Square(FigureInitialize):
+    """docstring for ClassName"""
+    def __init__(self):
+        super(Square, self).__init__()
+
+        
+
+
+
+figure = Triangle()  # создание экземпляра класса 
+figure.add_figure('triangle1')  # инициализация названия
+figure.add_vertex_coord('V1', 3, 5, 0) # инициализация вершины треугольника
+figure.add_vertex_coord('V2', 0, 3, -3) # инициализация вершины треугольника
+figure.add_vertex_coord('V3', 5, 0, -2) # инициализация вершины треугольника
+
+
+triangle = figure.get_figure('triangle1') # возвращает словарь значений { вершина: ее координаты  }
+
+sides = figure.side_value()
+deg = figure.deg_value()
+
+print(sides, deg)

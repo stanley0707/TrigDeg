@@ -1,18 +1,17 @@
 from trigdeg.core import Triangle
 
 
-figure = Triangle()
+figure = Triangle()  # создание экземпляра класса 
+figure.add_figure('triangle1')  # инициализация названия
+figure.add_vertex_coord('V1', 3, 5, 0) # инициализация вершины треугольника
+figure.add_vertex_coord('V2', 0, 3, -3) # инициализация вершины треугольника
+figure.add_vertex_coord('V3', 5, 0, -2) # инициализация вершины треугольника
 
-figure.add_vertex_coord('V1', 3, 5, 0),
-figure.add_vertex_coord('V2', 0, 3, -3),
-figure.add_vertex_coord('V3', 5, 0, -2)
 
-figure.add_figure('triangle1')
+triangle = figure.get_figure('triangle1') # возвращает словарь значений { вершина: ее координаты  }
 
-triangle = figure.get_figure('triangle1')
-side_a = figure.get_vertex('V1')
-side_b = figure.get_vertex('V2')
-side_c = figure.get_vertex('V3')
 sides = figure.side_value()
 deg = figure.deg_value()
+
+print(sides, deg)
  
