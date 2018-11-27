@@ -45,6 +45,18 @@ class FigureInitialize:
     def remove_figure(self, key):
         return self.name_space.get(key)
 
+    def add_vertex(self, key, *args):
+        try:
+            len(args[0]) >= 3  
+            self.vertex[key] = args[0]
+        except: 
+            raise CordError('invalid value')
+
+    def get_vertex(self, key):
+        for item in self.name_space.values():
+            for key in item:
+                return item.get(key)
+
 
 class Triangle(FigureInitialize):
 
@@ -52,21 +64,14 @@ class Triangle(FigureInitialize):
         super(Triangle, self).__init__()
         self.side = {}
         self.cos = {}
+        self.area = {}
 
-    def add_vertex_coord(self, key, *args):
-        self.vertex[key] = args
-
-    def get_vertex(self, key):
-        for item in self.name_space.values():
-            for key in item:
-                return item.get(key)
 
     # side equations AB, BC, AC
     def side_value(self):
 
         key = self._get_key()
-        sides = [key[0] +'_'+ key[1], key[1] +'_'+ key[2], key[0] +'_'+ key[2]]
-        
+        sides = ['side_'+key[0] +'_'+ key[1], 'side_'+key[1] +'_'+ key[2], 'side_'+key[0] +'_'+ key[2]]
         _x1, _y1, _z1 = self.vertex.get(key[0])
         _x2, _y2, _z2 = self.vertex.get(key[1])
         _x3, _y3, _z3 = self.vertex.get(key[2])
@@ -88,6 +93,7 @@ class Triangle(FigureInitialize):
     def deg_value(self):
         key = self._get_key()
         a, b, c = self.side.values()
+        cos_key = ['cos_' + key[0], 'cos_'+ key[1], 'cos_'+ key[2]]
         
         self.cos_V1 = round(math.degrees(
             math.acos((a**2 + c**2 - b**2) / (2 * a * c))), 3)
@@ -96,31 +102,52 @@ class Triangle(FigureInitialize):
         self.cos_V3 = round(math.degrees(
             math.acos((b**2 + c**2 - a**2) / (2 * c * b))), 3)
         
-        self.cos = dict(zip(key, [float(self.cos_V1), float(self.cos_V2), float(self.cos_V3)]))
+        self.cos = dict(zip(cos_key, [float(self.cos_V1), float(self.cos_V2), float(self.cos_V3)]))
         
         return self.cos
 
 
+    def get_area(self):
+        a, b, c = self.side.values()
+        half_meter = (a + b + c) / 2
+        self.area = dict(zip('a', [round( half_meter * (half_meter - a)*(half_meter - b)*(half_meter - c),3)]))
+        return self.area
+
 
 class Square(FigureInitialize):
     """docstring for ClassName"""
-    def __init__(self):
+    def __init__(self):  
         super(Square, self).__init__()
+        self.side = {}
+        self.cos = {}
+        self.area = {}
 
+    def _square_calc(self):
+        out = []
+        key = self._get_key()
         
+        i = int(len(key)/2)
+        while i:
+            triangle = Triangle()
+            triangle.add_vertex(key[0], self.vertex.get(key[0]))
+            triangle.add_vertex(key[i], self.vertex.get(key[i]))
+            triangle.add_vertex(key[i+1], self.vertex.get(key[i+1]))
+            triangle.add_figure('__inside_'+ str(i))
+            
+            out += [triangle.side_value(), triangle.deg_value(), triangle.get_area()]
+
+            i-=1            
+        return out
+
+    # area 
+    def get_area(self):
+        area = []
+        value = self._square_calc()
+        
+        for i in value:
+            if i.get('a'):
+                area.append(i.get('a'))
+        
+        return sum(area)
 
 
-
-figure = Triangle()  # создание экземпляра класса 
-figure.add_figure('triangle1')  # инициализация названия
-figure.add_vertex_coord('V1', 3, 5, 0) # инициализация вершины треугольника
-figure.add_vertex_coord('V2', 0, 3, -3) # инициализация вершины треугольника
-figure.add_vertex_coord('V3', 5, 0, -2) # инициализация вершины треугольника
-
-
-triangle = figure.get_figure('triangle1') # возвращает словарь значений { вершина: ее координаты  }
-
-sides = figure.side_value()
-deg = figure.deg_value()
-
-print(sides, deg)
