@@ -126,7 +126,7 @@ class Square(FigureInitialize):
         out = []
         key = self._get_key()
         
-        i = int(len(key)/2)
+        i = int(len(key)-2)
         while i:
             triangle = Triangle()
             triangle.add_vertex(key[0], self.vertex.get(key[0]))
